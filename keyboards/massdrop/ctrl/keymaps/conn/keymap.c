@@ -1,27 +1,28 @@
 #include QMK_KEYBOARD_H
 
 enum ctrl_keycodes {
-    L_BRI = SAFE_RANGE, //LED Brightness Increase                                   //Working
-    L_BRD,              //LED Brightness Decrease                                   //Working
+    L_BRI = SAFE_RANGE, //LED Brightness Increase
+    L_BRD,              //LED Brightness Decrease
     L_EDG_I,            //LED Edge Brightness Increase
     L_EDG_D,            //LED Edge Brightness Decrease
     L_EDG_M,            //LED Edge lighting mode
-    L_PTN,              //LED Pattern Select Next                                   //Working
-    L_PTP,              //LED Pattern Select Previous                               //Working
-    L_PSI,              //LED Pattern Speed Increase                                //Working
-    L_PSD,              //LED Pattern Speed Decrease                                //Working
-    L_T_MD,             //LED Toggle Mode                                           //Working
-    L_T_ONF,            //LED Toggle On / Off                                       //Broken
-    L_ON,               //LED On                                                    //Broken
-    L_OFF,              //LED Off                                                   //Broken
-    L_T_BR,             //LED Toggle Breath Effect                                  //Working
-    L_T_PTD,            //LED Toggle Scrolling Pattern Direction                    //Working
-    U_T_AGCR,           //USB Toggle Automatic GCR control                          //Working
-    DBG_TOG,            //DEBUG Toggle On / Off                                     //
-    DBG_MTRX,           //DEBUG Toggle Matrix Prints                                //
-    DBG_KBD,            //DEBUG Toggle Keyboard Prints                              //
-    DBG_MOU,            //DEBUG Toggle Mouse Prints                                 //
-    MD_BOOT             //Restart into bootloader after hold timeout                //Working
+    L_PTN,              //LED Pattern Select Next
+    L_PTP,              //LED Pattern Select Previous
+    L_PSI,              //LED Pattern Speed Increase
+    L_PSD,              //LED Pattern Speed Decrease
+    L_T_MD,             //LED Toggle Mode
+    L_T_ONF,            //LED Toggle On / Off
+    L_ON,               //LED On
+    L_OFF,              //LED Off
+    L_T_BR,             //LED Toggle Breath Effect
+    L_T_PTD,            //LED Toggle Scrolling Pattern Direction and effect
+    U_T_AGCR,           //USB Toggle Automatic GCR control
+    DBG_TOG,            //DEBUG Toggle On / Off
+    DBG_MTRX,           //DEBUG Toggle Matrix Prints
+    DBG_KBD,            //DEBUG Toggle Keyboard Prints
+    DBG_MOU,            //DEBUG Toggle Mouse Prints
+    DBG_FAC,            //DEBUG Factory light testing (All on white)
+    MD_BOOT             //Restart into bootloader after hold timeout
 };
 
 #define TG_NKRO MAGIC_TOGGLE_NKRO //Toggle 6KRO / NKRO mode
@@ -43,7 +44,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD, \
         L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, \
         _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, LGUI(LSFT(KC_L)), _______,                     _______, \
-        _______, _______, _______,                   XXXXXXX,                            _______, _______, _______, _______,            _______, _______, _______ \
+        _______, _______, _______,                   DBG_FAC,                            _______, _______, _______, _______,            _______, _______, _______ \
     ),
     /*
     [X] = LAYOUT(
@@ -73,9 +74,9 @@ void matrix_init_user(void) {
 void matrix_scan_user(void) {
 };
 
-#define MODS_SHIFT  (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
-#define MODS_CTRL  (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTRL))
-#define MODS_ALT  (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
+#define MODS_SHIFT (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
+#define MODS_CTRL (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTRL))
+#define MODS_ALT (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint32_t key_timer;
@@ -146,7 +147,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case L_T_ONF:
             if (record->event.pressed) {
-                I2C3733_Control_Set(I2C3733_Control_Get());
+                I2C3733_Control_Set(!I2C3733_Control_Get());
             }
             return false;
         case L_ON:
@@ -171,50 +172,60 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case L_T_PTD:
             if (record->event.pressed) {
-              //led_animation_direction = !led_animation_direction;
-              scroll_effect++;
-              if (scroll_effect == 1) {               //Patterns with scroll move horizontal (Right to left)
-                  led_animation_direction = 1;
-                  led_animation_orientation = 0;
-                  led_animation_circular = 0;
-									led_animation_bounce = 0;
-              } else if (scroll_effect == 2) {        //Patterns with scroll move vertical (Top to bottom)
-                  led_animation_direction = 1;
-                  led_animation_orientation = 1;
-                  led_animation_circular = 0;
-									led_animation_bounce = 0;
-              } else if (scroll_effect == 3) {        //Patterns with scroll move vertical (Bottom to top)
-                  led_animation_direction = 0;
-                  led_animation_orientation = 1;
-                  led_animation_circular = 0;
-									led_animation_bounce = 0;
-              } else if (scroll_effect == 4) {        //Patterns with scroll explode from center
-                  led_animation_direction = 0;
-                  led_animation_orientation = 0;
-                  led_animation_circular = 1;
-									led_animation_bounce = 0;
-              } else if (scroll_effect == 5) {        //Patterns with scroll implode on center
-                  led_animation_direction = 1;
-                  led_animation_orientation = 0;
-                  led_animation_circular = 1;
-									led_animation_bounce = 0;
-							} else if (scroll_effect == 6) {        // Patterns with scroll bounce left/right
-                led_animation_direction = 0;
-                led_animation_orientation = 0;
-                led_animation_circular = 0;
-								led_animation_bounce = 1;
-              } else {                                //Patterns with scroll move horizontal (Left to right)
-                  scroll_effect = 0;
+                scroll_effect++;
+                if (scroll_effect == 1) {               //Patterns with scroll move horizontal (Right to left)
+                    led_animation_direction = 1;
+                    led_animation_orientation = 0;
+                    led_animation_circular = 0;
+                    led_animation_bounce = 0;
+                } else if (scroll_effect == 2) {        //Patterns with scroll move vertical (Top to bottom)
+                    led_animation_direction = 1;
+                    led_animation_orientation = 1;
+                    led_animation_circular = 0;
+                    led_animation_bounce = 0;
+                } else if (scroll_effect == 3) {        //Patterns with scroll move vertical (Bottom to top)
+                    led_animation_direction = 0;
+                    led_animation_orientation = 1;
+                    led_animation_circular = 0;
+                    led_animation_bounce = 0;
+                } else if (scroll_effect == 4) {        //Patterns with scroll explode from center
+                    led_animation_direction = 0;
+                    led_animation_orientation = 0;
+                    led_animation_circular = 1;
+                    led_animation_bounce = 0;
+                } else if (scroll_effect == 5) {        //Patterns with scroll implode on center
+                    led_animation_direction = 1;
+                    led_animation_orientation = 0;
+                    led_animation_circular = 1;
+                    led_animation_bounce = 0;
+                } else if (scroll_effect == 6) {        // Patterns with scroll bounce left/right
                   led_animation_direction = 0;
                   led_animation_orientation = 0;
                   led_animation_circular = 0;
-									led_animation_bounce = 0;
-              }
+                  led_animation_bounce = 1;
+                } else {                                //Patterns with scroll move horizontal (Left to right)
+                    scroll_effect = 0;
+                    led_animation_direction = 0;
+                    led_animation_orientation = 0;
+                    led_animation_circular = 0;
+                    led_animation_bounce = 0;
+                }
             }
             return false;
         case U_T_AGCR:
             if (record->event.pressed && MODS_SHIFT && MODS_CTRL) {
                 TOGGLE_FLAG_AND_PRINT(usb_gcr_auto, "USB GCR auto mode");
+            }
+            return false;
+        case DBG_FAC:
+            if (record->event.pressed && MODS_SHIFT && MODS_CTRL) {
+                led_lighting_mode = LED_MODE_NORMAL;
+                led_edge_brightness = 1;
+                led_edge_mode = LED_EDGE_MODE_ALL;
+                led_animation_breathing = 0;
+                led_animation_id = 7; //led_programs.c led_setups leds_white index
+                gcr_desired = LED_GCR_MAX;
+                I2C3733_Control_Set(1);
             }
             return false;
         case DBG_TOG:
@@ -241,7 +252,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 key_timer = timer_read32();
             } else {
-                if (timer_elapsed32(key_timer) >= 500) {
+                if (timer_elapsed32(key_timer) >= BOOTKEY_HOLD_MS) {
                     reset_keyboard();
                 }
             }
