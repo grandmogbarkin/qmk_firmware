@@ -147,6 +147,7 @@ extern uint8_t led_animation_direction;
 extern uint8_t breathe_dir;
 extern uint8_t led_animation_orientation;
 extern uint8_t led_animation_circular;
+extern uint8_t led_animation_bounce;
 extern float led_edge_brightness;
 extern uint8_t led_edge_mode;
 

@@ -375,6 +375,8 @@ const rgb_matrix_driver_t rgb_matrix_driver = {
 // TODO?: wire these up to keymap.c
 uint8_t led_animation_orientation = 0;
 uint8_t led_animation_direction = 0;
+uint8_t led_animation_bounce = 0;
+uint8_t led_animation_bounced = 0;
 uint8_t led_animation_breathing = 0;
 uint8_t led_animation_id = 0;
 float led_animation_speed = 4.0f;
@@ -393,16 +395,20 @@ static void led_run_pattern(led_setup_t *f, float* ro, float* go, float* bo, flo
         po = pos; //Reset po for new frame
 
         //Add in any moving effects
+        float pomod_bounce = pomod;
+        if (led_animation_bounced) {
+          pomod_bounce *= -1;
+        }
         if ((!led_animation_direction && f->ef & EF_SCR_R) || (led_animation_direction && (f->ef & EF_SCR_L)))
         {
-            po -= pomod;
+            po -= pomod_bounce;
 
             if (po > 100) po -= 100;
             else if (po < 0) po += 100;
         }
         else if ((!led_animation_direction && f->ef & EF_SCR_L) || (led_animation_direction && (f->ef & EF_SCR_R)))
         {
-            po += pomod;
+            po += pomod_bounce;
 
             if (po > 100) po -= 100;
             else if (po < 0) po += 100;
@@ -485,6 +491,16 @@ static void led_matrix_massdrop_config_override(int i)
         } else {
             po = (float)g_led_config.point[i].x / 224.f * 100;
         }
+    }
+
+    if (led_animation_bounce) {
+      const float pomod_limit = 70.0f;
+      if (pomod >= pomod_limit && !led_animation_bounced) {
+        led_animation_direction = !led_animation_direction;
+        led_animation_bounced = true;
+      } else if (pomod < pomod_limit && led_animation_bounced) {
+        led_animation_bounced = false;
+      }
     }
 
     if (led_lighting_mode == LED_MODE_KEYS_ONLY && LED_IS_EDGE(led_map[i].scan)) {
