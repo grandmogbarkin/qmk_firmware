@@ -29,7 +29,33 @@ enum ctrl_keycodes {
 
 keymap_config_t keymap_config;
 
-#define P_HSCR_C MT(MOD_LGUI | MOD_LALT | MOD_LSFT, LGUI(LALT(KC_C)))
+#define P_HSCR_C MT(MOD_LGUI | MOD_LCTL, LGUI(LALT(KC_C)))
+
+// ****** TAPDANCE *****
+// tapdance keycodes
+enum td_keycodes {
+  SCR_CENTER // `LGUI | LCTL` when held, `LGUI(LALT(KC_C))` when tapped.
+};
+
+// define a type containing as many tapdance states as you need
+typedef enum {
+  SINGLE_TAP,
+  SINGLE_HOLD
+} td_state_t;
+
+// create a global instance of the tapdance state type
+static td_state_t td_state;
+
+// declare your tapdance functions:
+
+// function to determine the current tapdance state
+int cur_dance (qk_tap_dance_state_t *state);
+
+// `finished` and `reset` functions for each tapdance keycode
+void scr_center_finished (qk_tap_dance_state_t *state, void *user_data);
+void scr_center_reset (qk_tap_dance_state_t *state, void *user_data);
+// ****** TAPDANCE *****
+
 #define P_3RDS LCTL(LALT(KC_RIGHT))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -47,7 +73,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD, \
         L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, \
         _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, LGUI(LSFT(KC_L)), _______,                     _______, \
-        _______, _______, _______,                   DBG_FAC,                            KC_F11,  _______, P_HSCR_C, _______,            _______, _______, _______ \
+        _______, _______, _______,                   DBG_FAC,                            KC_F11,  _______, TD(SCR_CENTER), _______,            _______, _______, _______ \
     ),
     /*
     [X] = LAYOUT(
@@ -60,6 +86,53 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
     */
 };
+
+// ****** TAPDANCE *****
+// determine the tapdance state to return
+int cur_dance (qk_tap_dance_state_t *state) {
+  if (state->count == 1) {
+    if (state->interrupted || !state->pressed) { return SINGLE_TAP; }
+    else { return SINGLE_HOLD; }
+  }
+  // if (state->count == 2) { return DOUBLE_SINGLE_TAP; }
+  else { return 2; } // any number higher than the maximum state value you return above
+}
+ 
+// handle the possible states for each tapdance keycode you define:
+
+void scr_center_finished (qk_tap_dance_state_t *state, void *user_data) {
+  td_state = cur_dance(state);
+  switch (td_state) {
+    case SINGLE_TAP:
+      register_code16(LGUI(LALT(KC_C)));
+      break;
+    case SINGLE_HOLD:
+      register_mods(MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL)); // for a layer-tap key, use `layer_on(_MY_LAYER)` here
+      break;
+    // case DOUBLE_SINGLE_TAP: // allow nesting of 2 parens `((` within tapping term
+    //   tap_code16(KC_LPRN);
+    //   register_code16(KC_LPRN);
+  }
+}
+
+void scr_center_reset (qk_tap_dance_state_t *state, void *user_data) {
+  switch (td_state) {
+    case SINGLE_TAP:
+      unregister_code16(LGUI(LALT(KC_C)));
+      break;
+    case SINGLE_HOLD:
+      unregister_mods(MOD_BIT(KC_LGUI) | MOD_BIT(KC_LCTL)); // for a layer-tap key, use `layer_off(_MY_LAYER)` here
+      break;
+    // case DOUBLE_SINGLE_TAP:
+    //   unregister_code16(KC_LPRN);
+  }
+}
+
+// define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and `reset` functions
+qk_tap_dance_action_t tap_dance_actions[] = {
+  [SCR_CENTER] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, scr_center_finished, scr_center_reset)
+};
+// ****** TAPDANCE *****
 
 static uint8_t scroll_effect = 0;
 

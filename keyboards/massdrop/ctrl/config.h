@@ -64,6 +64,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SR_EXP_SCLK_PIN             13
 #define SR_EXP_SCLK_MUX             2
 
+/* TAP DANCE */
+#define TAPPING_TERM                200
+
 /* Debug LED (Small LED Located near MCU) */
 #define DEBUG_LED_ENABLE            1
 #define DEBUG_LED_PORT              PA
@@ -95,7 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE 5
 
 // Required BOOT key hold time (in ms) for restarting to bootloader -PS081419
-#define BOOTKEY_HOLD_MS		1000
+#define BOOTKEY_HOLD_MS		500
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
 //#define LOCKING_SUPPORT_ENABLE
