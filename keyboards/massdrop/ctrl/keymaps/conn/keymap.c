@@ -29,9 +29,12 @@ enum ctrl_keycodes {
 
 keymap_config_t keymap_config;
 
+#define P_HSCR_C MT(MOD_LGUI | MOD_LALT | MOD_LSFT, LGUI(LALT(KC_C)))
+#define P_3RDS LCTL(LALT(KC_RIGHT))
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT(
-        KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,             LGUI(LSFT(KC_3)), LGUI(LSFT(KC_4)), KC_PAUS, \
+        KC_ESC,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,             LGUI(LSFT(KC_3)), LGUI(LSFT(KC_4)), P_3RDS, \
         KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC,   KC_INS,  KC_HOME, KC_PGUP, \
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,   KC_DEL,  KC_END,  KC_PGDN, \
         KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT, \
@@ -44,7 +47,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD, \
         L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, \
         _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, LGUI(LSFT(KC_L)), _______,                     _______, \
-        _______, _______, _______,                   DBG_FAC,                            _______, _______, _______, _______,            _______, _______, _______ \
+        _______, _______, _______,                   DBG_FAC,                            KC_F11,  _______, P_HSCR_C, _______,            _______, _______, _______ \
     ),
     /*
     [X] = LAYOUT(
@@ -281,9 +284,9 @@ led_instruction_t led_instructions[] = {
     // layer 1 mod keys - red
     { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 0, .id1 = 448, .id2 = 16, .id3 = 0, .r = 255, .g = 0, .b = 0 },
     // layer 1 lock keys - purple
-    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 0, .id1 = 0, .id2 = 512, .id3 = 0, .r = 148, .g = 0, .b = 211 },
+    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 0, .id1 = 0, .id2 = 66048, .id3 = 0, .r = 148, .g = 0, .b = 211 },
     // layer 1 os keys - green
-    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 3221262336, .id1 = 229377, .id2 = 0, .id3 = 0, .r = 0, .g = 255, .b = 0 },
+    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 3221262336, .id1 = 229377, .id2 = 262144, .id3 = 0, .r = 0, .g = 255, .b = 0 },
 
     //Specific LEDs use the user's selected pattern while all others are off
     // { .flags = LED_FLAG_MATCH_ID | LED_FLAG_USE_ROTATE_PATTERN, .id0 = 0xFFFFFFFF, .id1 = 0xAAAAAAAA, .id2 = 0x55555555, .id3 = 0x11111111 },
