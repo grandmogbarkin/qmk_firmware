@@ -72,7 +72,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,   KC_MPLY, KC_MSTP, KC_VOLU, \
         L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD, \
         L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, \
-        _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, LGUI(LSFT(KC_L)), _______,                     _______, \
+        _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, LGUI(LSFT(KC_H)), LGUI(LSFT(KC_L)), _______,                     _______, \
         _______, _______, _______,                   DBG_FAC,                            KC_F11,  _______, TD(SCR_CENTER), _______,            _______, _______, _______ \
     ),
     /*
@@ -357,7 +357,7 @@ led_instruction_t led_instructions[] = {
     // layer 1 mod keys - red
     { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 0, .id1 = 448, .id2 = 16, .id3 = 0, .r = 255, .g = 0, .b = 0 },
     // layer 1 lock keys - purple
-    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 0, .id1 = 0, .id2 = 66048, .id3 = 0, .r = 148, .g = 0, .b = 211 },
+    { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 0, .id1 = 0, .id2 = 66304, .id3 = 0, .r = 148, .g = 0, .b = 211 },
     // layer 1 os keys - green
     { .flags = LED_FLAG_MATCH_ID | LED_FLAG_MATCH_LAYER | LED_FLAG_USE_RGB, .layer = 1, .id0 = 3221286912, .id1 = 229377, .id2 = 262144, .id3 = 0, .r = 0, .g = 255, .b = 0 },
 
