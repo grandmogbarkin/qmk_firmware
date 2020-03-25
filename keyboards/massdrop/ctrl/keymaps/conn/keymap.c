@@ -1,4 +1,6 @@
 #include QMK_KEYBOARD_H
+#include <stdio.h>
+#include "secrets.h"
 
 enum ctrl_keycodes {
     L_BRI = SAFE_RANGE, //LED Brightness Increase
@@ -72,8 +74,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,   KC_MPLY, KC_MSTP, KC_VOLU, \
         L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD, \
         L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, \
-        _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, LGUI(LSFT(KC_H)), LGUI(LSFT(KC_L)), LCTL(LSFT(KC_S)), _______, \
-        _______, _______, _______,                   DBG_FAC,                            KC_F11,  _______, TD(SCR_CENTER), _______,            _______, _______, _______ \
+        _______, L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, LCTL(LSFT(KC_S)), LALT(LCTL(LGUI(LSFT(KC_L)))), LGUI(LSFT(KC_H)), _______, \
+        _______, _______, _______,                   DBG_FAC,                            KC_F11,  _______, TD(SCR_CENTER), TO(2),            _______, _______, _______ \
+    ),
+    [2] = LAYOUT(
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,            XXXXXXX, XXXXXXX, XXXXXXX, \
+        XXXXXXX, KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    XXXXXXX, XXXXXXX, XXXXXXX,   XXXXXXX, XXXXXXX, XXXXXXX, \
+        XXXXXXX, KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,   XXXXXXX, XXXXXXX, XXXXXXX, \
+        XXXXXXX, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT, \
+        XXXXXXX, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,                              XXXXXXX, \
+        XXXXXXX, XXXXXXX, XXXXXXX,                   KC_SPC,                             XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,            XXXXXXX, XXXXXXX, XXXXXXX \
     ),
     /*
     [X] = LAYOUT(
@@ -138,7 +148,7 @@ static uint8_t scroll_effect = 0;
 
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
-  led_animation_id = 8;
+  led_animation_id = 7; // 8
   led_animation_speed = 6.0f;
   // scroll_effect = 4;
   // led_animation_circular = 1;
@@ -153,6 +163,96 @@ void matrix_scan_user(void) {
 #define MODS_SHIFT (get_mods() & MOD_BIT(KC_LSHIFT) || get_mods() & MOD_BIT(KC_RSHIFT))
 #define MODS_CTRL (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTRL))
 #define MODS_ALT (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
+
+int modulo(int n,int M){
+  return ((n % M) + M) % M;
+}
+
+void decrypt(char *msg, int msgLen, char* key, int keyLen, char* decryptedMsg) {
+  const int u_len = 95;
+  const int u_base = 32;
+
+  int i;
+  for(i = 0; i < msgLen; ++i) {
+      decryptedMsg[i] = modulo(((msg[i]-u_base) - (key[i%keyLen]-u_base)), u_len) + u_base;
+  }
+
+  decryptedMsg[i] = '\0';
+}
+
+bool process_custom_record_keymap(uint16_t keycode, keyrecord_t *record) {
+  static char key[100];
+  static int key_len = 0;
+  static int shifted = 0;
+
+  static int keycode_map[] = {
+    0, 0, 0, 0,
+    97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, // letters
+    49, 50, 51, 52, 53, 54, 55, 56, 57, 48, // numbers
+    0, 0, 0, 0,
+    32, // space
+    0, 0,
+    91, 93, 92, // [ ] slash
+    0,
+    59, 39, // ; '
+    0,
+    44, 46, 47 // , . /
+  };
+  static int keycode_shift_map[] = {
+    0, 0, 0, 0,
+    65, 66, 67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90, // caps
+    33, 64, 35, 36, 37, 94, 38, 42, 40, 41, // number row
+    0, 0, 0, 0,
+    32, // space
+    0, 0,
+    123, 125, 124, // { } |
+    0,
+    58, 34, // : "
+    0,
+    60, 62, 63 // < > ?
+  };
+
+  if (!IS_LAYER_ON(2)) return true;  //Process all non-layer 2 keycodes normally
+
+  switch (keycode) {
+    case KC_ENT:
+      if (record->event.pressed) {
+        key[key_len] = '\0';
+        int msg_len = key_len * 4;
+        char msg[msg_len + 3];
+        int j, final_len;
+        for (final_len = 0, j = 0; j < key_len; ++j) {
+          for (int k = 0; k < 4; ++k) {
+            msg[(j*4)+k] = keycode_vignere_enc[key[j] - 33].str[k];
+            ++final_len;
+          }
+        }
+        msg[final_len++] = 'd';
+        msg[final_len++] = 'U';
+        char decrypted[j];
+        decrypt(msg, final_len, key, key_len, decrypted);
+        send_string(decrypted);
+        key_len = 0;
+        shifted = 0;
+        layer_off(2);
+      }
+      break;
+    case KC_RSFT:
+      if (record->event.pressed) {
+        shifted = 1;
+      } else {
+        shifted = 0;
+      }
+      break;
+    default:
+      if (record->event.pressed) {
+        key[key_len++] = shifted ? keycode_shift_map[keycode] : keycode_map[keycode];
+      }
+      break;
+  }
+  unregister_code(keycode);
+  return false; // Don't process anything else
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint32_t key_timer;
@@ -334,7 +434,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         default:
-            return true; //Process all other keycodes normally
+            return process_custom_record_keymap(keycode, record);
     }
 }
 
