@@ -107,7 +107,7 @@ int cur_dance (qk_tap_dance_state_t *state) {
   // if (state->count == 2) { return DOUBLE_SINGLE_TAP; }
   else { return 2; } // any number higher than the maximum state value you return above
 }
- 
+
 // handle the possible states for each tapdance keycode you define:
 
 void scr_center_finished (qk_tap_dance_state_t *state, void *user_data) {
@@ -228,7 +228,9 @@ bool process_custom_record_keymap(uint16_t keycode, keyrecord_t *record) {
           }
         }
         msg[final_len++] = 'd';
-        msg[final_len++] = 'U';
+        if (key_len % 2) {
+          msg[final_len++] = 'U';
+        }
         char decrypted[j];
         decrypt(msg, final_len, key, key_len, decrypted);
         send_string(decrypted);
