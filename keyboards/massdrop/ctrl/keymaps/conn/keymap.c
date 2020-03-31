@@ -183,6 +183,8 @@ void decrypt(char *msg, int msgLen, char* key, int keyLen, char* decryptedMsg) {
 bool process_custom_record_keymap(uint16_t keycode, keyrecord_t *record) {
   static char key[100];
   static int key_len = 0;
+  static char dec_map[100];
+  static int dec_len = -1;
   static int shifted = 0;
 
   static int keycode_map[] = {
@@ -218,25 +220,32 @@ bool process_custom_record_keymap(uint16_t keycode, keyrecord_t *record) {
     case KC_ENT:
       if (record->event.pressed) {
         key[key_len] = '\0';
-        int msg_len = key_len * 4;
-        char msg[msg_len + 3];
-        int j, final_len;
-        for (final_len = 0, j = 0; j < key_len; ++j) {
-          for (int k = 0; k < 4; ++k) {
-            msg[(j*4)+k] = keycode_vignere_enc[key[j] - 33].str[k];
-            ++final_len;
+        if (dec_len >= 0) {
+          int msg_len = dec_len * 4;
+          char msg[msg_len + 3];
+          int j, final_len;
+          for (final_len = 0, j = 0; j < dec_len; ++j) {
+            for (int k = 0; k < 4; ++k) {
+              msg[(j*4)+k] = keycode_vignere_enc[dec_map[j] - 33].str[k];
+              ++final_len;
+            }
           }
+          if (dec_len % 2) {
+            msg[final_len++] = 'f';
+            msg[final_len++] = 'R';
+          } else {
+            msg[final_len++] = 'd';
+          }
+          char decrypted[j];
+          decrypt(msg, final_len, key, key_len, decrypted);
+          send_string(decrypted);
+          key_len = 0;
+          dec_len = -1;
+          layer_off(2);
+        } else {
+          dec_len = 0;
         }
-        msg[final_len++] = 'd';
-        if (key_len % 2) {
-          msg[final_len++] = 'U';
-        }
-        char decrypted[j];
-        decrypt(msg, final_len, key, key_len, decrypted);
-        send_string(decrypted);
-        key_len = 0;
         shifted = 0;
-        layer_off(2);
       }
       break;
     case KC_RSFT:
@@ -248,7 +257,12 @@ bool process_custom_record_keymap(uint16_t keycode, keyrecord_t *record) {
       break;
     default:
       if (record->event.pressed) {
-        key[key_len++] = shifted ? keycode_shift_map[keycode] : keycode_map[keycode];
+        char next_char = shifted ? keycode_shift_map[keycode] : keycode_map[keycode];
+        if (dec_len < 0) {
+          key[key_len++] = next_char;
+        } else {
+          dec_map[dec_len++] = next_char;
+        }
       }
       break;
   }
