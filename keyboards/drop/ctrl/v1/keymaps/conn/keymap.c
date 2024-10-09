@@ -50,12 +50,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LALT, KC_LGUI,                   KC_SPC,                                      KC_RGUI, MO(1),   KC_RALT, KC_RCTL,   KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [1] = LAYOUT(
-        _______,          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F13, KC_EJCT,    P_SCRLEFT, P_SCRRIGHT, KC_MUTE,
-        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______, _______,   KC_MPLY, KC_MSTP, KC_VOLU,
-        L_T_BR,  L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD,
-        L_T_PTD, L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
-        _______,          L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, LCTL(LSFT(KC_S)), P_LOCK, LGUI(LSFT(KC_H)), _______,
-        _______, _______, _______,                   DBG_FAC,                                     P_WINRST,  _______, _______, TO(2), _______, _______, _______
+        _______,                  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F13, KC_EJCT,    P_SCRLEFT, P_SCRRIGHT, KC_MUTE,
+        RGB_MODE_KNIGHT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______, _______,   KC_MPLY, KC_MSTP, KC_VOLU,
+        L_T_BR,          L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD,
+        L_T_PTD,         L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
+        _______,                  L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, LCTL(LSFT(KC_S)), P_LOCK, LGUI(LSFT(KC_H)), _______,
+        _______,         _______, _______,                   DBG_FAC,                                     P_WINRST,  _______, _______, TO(CODE_LAYER), _______, _______, _______
     ),
     [CODE_LAYER] = LAYOUT(
         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,            XXXXXXX, XXXXXXX, XXXXXXX,
