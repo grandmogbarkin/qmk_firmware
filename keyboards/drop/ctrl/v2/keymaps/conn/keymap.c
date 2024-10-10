@@ -16,7 +16,7 @@ enum custom_keycodes {
 #define P_3RDS LCTL(LALT(KC_RIGHT))
 #define P_SCRLEFT LALT(LCTL(LSFT(KC_LEFT)))
 #define P_SCRRIGHT LALT(LCTL(LSFT(KC_RIGHT)))
-#define P_SCRMAX LGUI(LCTL(KCNE_NT))
+#define P_SCRMAX LGUI(LCTL(KC_ENT))
 #define CODE_LAYER 3
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {

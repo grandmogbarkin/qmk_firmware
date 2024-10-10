@@ -38,6 +38,7 @@ enum md_keycodes {
 #define P_3RDS LCTL(LALT(KC_RIGHT))
 #define P_SCRLEFT LALT(LCTL(LSFT(KC_LEFT)))
 #define P_SCRRIGHT LALT(LCTL(LSFT(KC_RIGHT)))
+#define P_SCRMAX LGUI(LCTL(KC_ENT))
 #define CODE_LAYER 2
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -52,7 +53,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [1] = LAYOUT(
         _______,                  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_F13, KC_EJCT,    P_SCRLEFT, P_SCRRIGHT, KC_MUTE,
         RGB_MODE_KNIGHT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______, _______, _______,   KC_MPLY, KC_MSTP, KC_VOLU,
-        L_T_BR,          L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,   KC_MPRV, KC_MNXT, KC_VOLD,
+        L_T_BR,          L_PSD,   L_BRI,   L_PSI,   L_EDG_I, DBG_TOG, DBG_MTRX,DBG_KBD, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, P_SCRMAX,   KC_MPRV, KC_MNXT, KC_VOLD,
         L_T_PTD,         L_PTP,   L_BRD,   L_PTN,   L_EDG_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,          _______,
         _______,                  L_T_MD,  L_T_ONF, XXXXXXX, L_EDG_M, MD_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, LCTL(LSFT(KC_S)), P_LOCK, LGUI(LSFT(KC_H)), _______,
         _______,         _______, _______,                   DBG_FAC,                                     P_WINRST,  _______, _______, TO(CODE_LAYER), _______, _______, _______
